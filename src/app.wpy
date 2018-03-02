@@ -11,6 +11,7 @@
 
 <script>
 import wepy from 'wepy'
+import Promise from 'promise-polyfill'
 import 'wepy-async-function'
 
 import { setStore } from 'wepy-redux'
@@ -39,6 +40,7 @@ export default class extends wepy.app {
   constructor () {
     super()
     this.use('requestfix')
+    this.use('promisify')
   }
 
   onLaunch() {
