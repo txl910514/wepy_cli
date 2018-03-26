@@ -1,0 +1,65 @@
+<style lang="less">
+  .map {
+    position: absolute;
+    left:0;
+    background:#000;
+    right:0;
+    top:0;
+    bottom:0;
+  }
+</style>
+<template>
+  <view class="map">
+    <map id="map" longitude="{{mapdata.longitude}}" latitude="{{mapdata.latitude}}" scale="14" style="width: 100%;height: 100%" ></map>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Map extends wepy.page {
+    data = {
+      userinfo: {},
+      mapdata: {
+      }
+    }
+    async onShow () {
+      try {
+        const { userInfo } = await wepy.getUserInfo()
+        const res = await wepy.getLocation({type: 'gcj02'})
+        this.mapdata = res
+        this.userinfo = userInfo
+        console.log(res)
+        console.log(this.userinfo)
+      } catch (e) {
+        wepy.showModal({
+          title: '提示',
+          content: `加载页面出错，请截图本提示，并联系深大汪峰。${e.message}`
+        })
+      }
+    }
+    methods = {
+      getLocations () {
+        console.log(12)
+        wepy.getLocation({
+          type: 'wgs84',
+          success (res) {
+            console.log(res)
+            console.log(this)
+          },
+          fail (res) {
+            console.log(res)
+          },
+          complete (res) {
+            console.log(res)
+          }
+        })
+        wepy.getUserInfo({
+          success (res) {
+            console.log(res)
+          }
+        })
+      }
+    }
+  }
+</script>

@@ -1,4 +1,5 @@
 <style lang="less">
+/*@import "~weui/src/style/weui.less";*/
 .container {
   height: 100%;
   display: flex;
@@ -23,13 +24,29 @@ setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index'
+      'pages/home',
+      'pages/map'
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: '小程序',
       navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      color: '#808080',
+      selectedColor: '#3cc51f',
+      backgroundColor: '#fff',
+      list: [
+        {
+          pagePath: 'pages/home',
+          text: '首页'
+        },
+        {
+          pagePath: 'pages/map',
+          text: '地图'
+        }
+      ]
     }
   }
 
@@ -67,6 +84,7 @@ export default class extends wepy.app {
     }
     wepy.getUserInfo({
       success (res) {
+        console.log(res)
         that.globalData.userInfo = res.userInfo
         cb && cb(res.userInfo)
       }
