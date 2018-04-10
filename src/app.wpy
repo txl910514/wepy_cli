@@ -1,5 +1,5 @@
 <style lang="less">
-/*@import "~weui/src/style/weui.less";*/
+  @import "../node_modules/weui-wxss/dist/style/weui.wxss";
 .container {
   height: 100%;
   display: flex;
@@ -32,21 +32,6 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: '小程序',
       navigationBarTextStyle: 'black'
-    },
-    tabBar: {
-      color: '#808080',
-      selectedColor: '#3cc51f',
-      backgroundColor: '#fff',
-      list: [
-        {
-          pagePath: 'pages/home',
-          text: '首页'
-        },
-        {
-          pagePath: 'pages/map',
-          text: '地图'
-        }
-      ]
     }
   }
 
