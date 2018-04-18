@@ -37,5 +37,10 @@
         })
       }
     }
+    onLoad() {
+      // this.$parent.getUserInfo(function (userInfo) {
+      //   console.log(userInfo)
+      // })
+    }
   }
 </script>

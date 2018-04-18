@@ -17,6 +17,7 @@ import 'wepy-async-function'
 
 import { setStore } from 'wepy-redux'
 import configStore from './store'
+import {modal} from '@/utils/utils'
 
 const store = configStore()
 setStore(store)
@@ -47,6 +48,7 @@ export default class extends wepy.app {
 
   onLaunch() {
     this.testAsync()
+    // this.getUserInfo('init')
   }
 
   sleep (s) {
@@ -62,18 +64,59 @@ export default class extends wepy.app {
     console.log(data)
   }
 
-  getUserInfo(cb) {
-    const that = this
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo
+  async login (code, encryptedData, iv) {
+    console.log(code)
+    console.log(encryptedData)
+    console.log(iv)
+    return {
+      token: '67777773'
     }
-    wepy.getUserInfo({
-      success (res) {
-        console.log(res)
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
+  }
+
+  async getUserInfo(cb) {
+    const token = wepy.getStorageSync('token')
+    if (token) {
+      if (cb !== 'init') {
+        const userInfo = wepy.getStorageSync('userInfo')
+        typeof cb === 'function' && cb(userInfo)
+        return
       }
+    }
+    wepy.showLoading({
+      title: '登录中',
+      mask: true
     })
+    const login = await wepy.login()
+    if (login.code) {
+      const userInfo = await wepy.getUserInfo().catch(res => {
+        const refuseUser = wepy.getStorageSync('refuseUser')
+        wepy.hideLoading()
+        if (!refuseUser) {
+          modal(null, null, '重新授权', '#3CC51F', '是', null, () => {
+            wepy.setStorageSync('refuseUser', true)
+          }, async () => {
+            wepy.openSetting({
+              success (res) {
+                if (res.authSetting['scope.userInfo']) {
+                  this.getUserInfo()
+                }
+              }
+            })
+          })
+        }
+      })
+      if ((userInfo || {}).userInfo) {
+        const encryptedData = encodeURIComponent(userInfo.encryptedData)
+        const iv = userInfo.iv
+        const saveLogin = await this.login(login.code, encryptedData, iv)
+        if (saveLogin.token) {
+          wepy.setStorageSync('token', saveLogin.token)
+          wepy.setStorageSync('userInfo', saveLogin.userInfo)
+          wepy.hideLoading()
+          typeof cb === 'function' && cb(userInfo.userInfo)
+        }
+      }
+    }
   }
 }
 </script>
